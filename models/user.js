@@ -15,23 +15,33 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  colleagues: [{
-    user: {
-      type: Object,
-      email: String,
-      name: String,
-    }
-  }],
+  colleagues: [
+    {
+      user: {
+        type: Object,
+        email: String,
+        name: String,
+      },
+    },
+  ],
   processes: {
     items: [
       {
-        decision: {
+        title: {
+          type: String,
+          required: true,
+        },
+        stages: {
+          type: Array,
+          required: true,
+        },
+        state: {
           type: String,
           required: true,
         },
         processId: {
           type: Schema.Types.ObjectId,
-          red: "Process",
+          ref: "Process",
           required: true,
         },
       },
@@ -39,20 +49,31 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.methods.addToTask = function (decision, task) {
-  const clonedTasks = [...this.tasks.items];
-  if (
-    !this.processes.items.find(
-      (item) => item.processId.toString() === task.id.toString()
-    )
-  ) {
-    clonedTasks.push({
-      decision: decision,
-      processId: task._id,
-    });
-    this.processes = { items: clonedTasks };
-    return this.save();
-  }
+userSchema.methods.addToProcess = function (process) {
+  console.log(process);
+  this.processes.items = [
+    ...this.processes.items,
+    {
+      title: process.title,
+      stages: process.stages,
+      state: process.state,
+      processId: process._id,
+    },
+  ];
+  return this.save();
+  // const clonedTasks = [...this.tasks.items];
+  // if (
+  //   !this.processes.items.find(
+  //     (item) => item.processId.toString() === task.id.toString()
+  //   )
+  // ) {
+  //   clonedTasks.push({
+  //     decision: decision,
+  //     processId: task._id,
+  //   });
+  //   this.processes = { items: clonedTasks };
+  //   return this.save();
+  // }
 };
 
 module.exports = model("User", userSchema);

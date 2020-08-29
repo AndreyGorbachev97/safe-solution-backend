@@ -10,9 +10,9 @@ const homeRoutes = require("./routes/home");
 const authRoutes = require("./routes/auth");
 const processesRoutes = require("./routes/processes");
 const userRoutes = require("./routes/user");
-const taskRoutes = require("./routes/task");
 const bodyParser = require("body-parser");
 const varMIddleware = require("./middleware/variables");
+const userMiddleware = require("./middleware/user");
 const keys = require("./keys");
 
 const MONGODB_URI = keys.MONGODB_URI;
@@ -21,15 +21,18 @@ const server = require("http").createServer(app);
 
 app.use(
   cors({
-    origin: "http://192.168.43.20:8080",
+    origin: ["http://192.168.43.23:8080", "http://localhost:8080"],
     credentials: true,
   })
 );
-// app.use(function(req, res, next) {
+// app.use(function (req, res, next) {
 //   res.setHeader("Access-Control-Allow-Credentials", "true");
-//   res.setHeader("Access-Control-Allow-Origin", "http://192.168.43.20:8080");
+//   res.setHeader("Access-Control-Allow-Origin", "http://192.168.43.23:8080");
 //   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-//   res.setHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "origin, content-type, accept, authorization"
+//   );
 //   return next();
 // });
 
@@ -57,6 +60,7 @@ app.use(
 );
 //app.use(csrf());
 app.use(varMIddleware);
+app.use(userMiddleware);
 
 app.use(bodyParser.json());
 //routes
@@ -64,7 +68,6 @@ app.use("/", homeRoutes);
 app.use("/add", addRoutes);
 app.use("/processes", processesRoutes);
 app.use("/auth", authRoutes);
-app.use("/task", taskRoutes);
 app.use("/user", userRoutes);
 
 const PORT = process.env.port || 3000;
@@ -81,7 +84,7 @@ async function start() {
       console.log(`Server is running on port ${PORT}`);
     });
     //подключаем сокеты
-    require("./socket")(server);
+    //require("./socket")(server);
   } catch (e) {
     console.log(e);
   }

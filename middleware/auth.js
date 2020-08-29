@@ -8,6 +8,7 @@ module.exports = function(req, res, next) {
   //   res.status(401).json({message: 'token not provided!'});
   // }
   // res.send({message: 'token true'})
+  console.log('test', req.session.isAuthenticated)
   if (!req.session.isAuthenticated) {
     console.log("bad session", req.session);
     return res.send({ isAuthenticated: false });

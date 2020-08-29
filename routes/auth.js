@@ -25,8 +25,9 @@ router.post("/login", async (req, res) => {
 
     const candidate = await User.findOne({ email });
     if (candidate) {
+      console.log("candidate", candidate);
       const areSame = await bcrypt.compare(password, candidate.password);
-
+      console.log(areSame);
       if (areSame) {
         // const token = jwt.sign(candidate._id.toString(), JWT_SCRET);
         req.session.user = candidate;
@@ -41,7 +42,7 @@ router.post("/login", async (req, res) => {
         res.send({ message: "error login", login: false });
       }
     } else {
-      req.flash("loginError", "Такого пользователя не существует");
+      req.send("loginError", "Такого пользователя не существует");
       res.redirect("/auth/login#login");
     }
   } catch (e) {
