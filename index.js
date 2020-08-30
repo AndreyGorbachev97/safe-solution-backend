@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const addRoutes = require("./routes/add");
 const homeRoutes = require("./routes/home");
 const authRoutes = require("./routes/auth");
+const entityRoutes = require("./routes/entity");
 const processesRoutes = require("./routes/processes");
 const userRoutes = require("./routes/user");
 const bodyParser = require("body-parser");
@@ -69,6 +70,7 @@ app.use("/add", addRoutes);
 app.use("/processes", processesRoutes);
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/emtity", entityRoutes);
 
 const PORT = process.env.port || 3000;
 

@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Entity = require("../models/entity");
 const { Router } = require("express");
 const bcrypt = require("bcryptjs");
 
@@ -52,7 +53,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, phone, password, repeat, name, surname } = req.body;
+    const { email, phone, password, repeat, entity, name, surname } = req.body;
     //однонаправленное шифрование пароля
     const hashPassword = await bcrypt.hash(password, 10);
     //поиск пользователя в бд
@@ -62,15 +63,29 @@ router.post("/register", async (req, res) => {
       //   req.flash("registerError", "Пользователь с таким email уже существует");
       res.send({ massage: "user exists", registration: false });
     } else {
+      let entityCheck = await Entity.findOne({ name: entity });
+      console.log("test2", entityCheck);
+      if (!entityCheck) {
+        entityCheck = new Entity({
+          name: entity,
+        });
+        entityCheck.save();
+      }
       const user = new User({
         email,
         phone,
         name,
         surname,
+        entity,
         password: hashPassword,
         processes: { items: [] },
       });
-      await user.save();
+      user.save();
+      await entityCheck.addToMember(user);
+      req.session.user = user;
+      req.session.isAuthenticated = true;
+      req.session.save();
+
       res.send({ massage: "user is registered", registration: true });
     }
   } catch (e) {

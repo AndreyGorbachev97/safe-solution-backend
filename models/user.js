@@ -5,16 +5,13 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  phone: {
-    type: String,
-    require: true,
-  },
   name: String,
   surname: String,
   password: {
     type: String,
     required: true,
   },
+  entity: String,
   colleagues: [
     {
       user: {
