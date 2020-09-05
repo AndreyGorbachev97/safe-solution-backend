@@ -69,7 +69,7 @@ router.post("/register", async (req, res) => {
         entityCheck = new Entity({
           name: entity,
         });
-        entityCheck.save();
+        await entityCheck.save();
       }
       const user = new User({
         email,
@@ -80,7 +80,7 @@ router.post("/register", async (req, res) => {
         password: hashPassword,
         processes: { items: [] },
       });
-      user.save();
+      await user.save();
       await entityCheck.addToMember(user);
       req.session.user = user;
       req.session.isAuthenticated = true;

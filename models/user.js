@@ -21,6 +21,17 @@ const userSchema = new Schema({
       },
     },
   ],
+  solutions: [
+    {
+      title: String,
+      vote: String,
+      stage: {
+        amount: Number,
+        status: String,
+        step: Number,
+      },
+    },
+  ],
   processes: {
     items: [
       {
@@ -47,7 +58,7 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.addToProcess = function (process) {
-  console.log(process);
+  console.log("process");
   this.processes.items = [
     ...this.processes.items,
     {
@@ -58,19 +69,12 @@ userSchema.methods.addToProcess = function (process) {
     },
   ];
   return this.save();
-  // const clonedTasks = [...this.tasks.items];
-  // if (
-  //   !this.processes.items.find(
-  //     (item) => item.processId.toString() === task.id.toString()
-  //   )
-  // ) {
-  //   clonedTasks.push({
-  //     decision: decision,
-  //     processId: task._id,
-  //   });
-  //   this.processes = { items: clonedTasks };
-  //   return this.save();
-  // }
+};
+
+userSchema.methods.addToSolutions = function (solution) {
+  console.log("solution", solution);
+  this.solutions = [...this.solutions, solution];
+  return this.save();
 };
 
 module.exports = model("User", userSchema);

@@ -23,6 +23,28 @@ router.post("/add", auth, async (req, res) => {
   try {
     process.save();
     await req.user.addToProcess(process);
+    //достаем всех участников и номера этопов в которых они учавствуют
+    const participants = process.stages.reduce(
+      (acc, el, i) => [
+        ...acc,
+        ...el.participant.map((el) => ({ email: el, step: i + 1 })),
+      ],
+      []
+    );
+    //добавляем в бд инф пользователям о том, что они учавствуют в процессе
+    for (let i = 0; i < participants.length; i++) {
+      const currentUser = await User.findOne({ email: participants[i].email });
+      await currentUser.addToSolutions({
+        title: process.title,
+        vote: "waiting",
+        stage: {
+          amount: process.stages.length,
+          status: "progress",
+          step: participants[i].step,
+        },
+      });
+    }
+
     res.status(200);
     res.send(process);
   } catch (e) {

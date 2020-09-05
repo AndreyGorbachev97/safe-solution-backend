@@ -3,6 +3,7 @@ const path = require("path");
 cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
+const User = require("./models/user");
 const csrf = require("csurf"); //пакет CSRF - защиты
 const mongoose = require("mongoose");
 const addRoutes = require("./routes/add");
@@ -19,6 +20,7 @@ const keys = require("./keys");
 const MONGODB_URI = keys.MONGODB_URI;
 const app = express();
 const server = require("http").createServer(app);
+var sio = require("socket.io")(server);
 
 app.use(
   cors({
@@ -43,22 +45,42 @@ const store = require("./lib/sessionStore");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 
-app.use(
-  session({
-    //строка на основе которой шифруетя сессия
-    secret: keys.SESSION_SECRET,
-    key: "sid",
-    cookie: {
-      path: "/",
-      _expires: null,
-      originalMaxAge: null,
-      httpOnly: true,
-    },
-    resave: false,
-    saveUninitialized: false,
-    store,
-  })
-);
+const sessionMiddleware = session({
+  secret: keys.SESSION_SECRET,
+  key: "sid",
+  cookie: {
+    path: "/",
+    _expires: null,
+    originalMaxAge: null,
+    httpOnly: true,
+  },
+  resave: false,
+  saveUninitialized: false,
+  store,
+});
+
+sio.use(function (socket, next) {
+  sessionMiddleware(socket.request, socket.request.res, next);
+});
+
+app.use(sessionMiddleware);
+
+// app.use(
+//   session({
+//     //строка на основе которой шифруетя сессия
+//     secret: keys.SESSION_SECRET,
+//     key: "sid",
+//     cookie: {
+//       path: "/",
+//       _expires: null,
+//       originalMaxAge: null,
+//       httpOnly: true,
+//     },
+//     resave: false,
+//     saveUninitialized: false,
+//     store,
+//   })
+// );
 //app.use(csrf());
 app.use(varMIddleware);
 app.use(userMiddleware);
@@ -72,6 +94,24 @@ app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/emtity", entityRoutes);
 
+const findCandidate = async (email) => {
+  const candidate = await User.findOne({ email });
+  console.log("candidate", candidate);
+  return candidate;
+};
+sio.on("connection", function (socket) {
+  findCandidate(socket.request.session.user.email);
+  socket.on("message", function () {
+    sio.emit("message");
+  });
+  socket.on("createMessage", function () {
+    
+  });
+  socket.on("disconnect", function () {
+    sio.emit("Пользователь отсоединился");
+  });
+});
+
 const PORT = process.env.port || 3000;
 
 async function start() {
@@ -82,7 +122,7 @@ async function start() {
       useUnifiedTopology: true,
     });
 
-    const server = app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
     //подключаем сокеты
