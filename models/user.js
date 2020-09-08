@@ -23,6 +23,7 @@ const userSchema = new Schema({
   ],
   solutions: [
     {
+      date: String,
       title: String,
       vote: String,
       stage: {
@@ -35,6 +36,10 @@ const userSchema = new Schema({
   processes: {
     items: [
       {
+        date: {
+          type: String,
+          required: true,
+        },
         title: {
           type: String,
           required: true,
@@ -58,7 +63,6 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.addToProcess = function (process) {
-  console.log("process");
   this.processes.items = [
     ...this.processes.items,
     {
@@ -66,8 +70,11 @@ userSchema.methods.addToProcess = function (process) {
       stages: process.stages,
       state: process.state,
       processId: process._id,
+      result: process.result,
+      date: process.date,
     },
   ];
+  console.log("date", process.date);
   return this.save();
 };
 

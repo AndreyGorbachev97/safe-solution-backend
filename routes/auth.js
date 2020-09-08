@@ -26,9 +26,7 @@ router.post("/login", async (req, res) => {
 
     const candidate = await User.findOne({ email });
     if (candidate) {
-      console.log("candidate", candidate);
       const areSame = await bcrypt.compare(password, candidate.password);
-      console.log(areSame);
       if (areSame) {
         // const token = jwt.sign(candidate._id.toString(), JWT_SCRET);
         req.session.user = candidate;
@@ -64,7 +62,6 @@ router.post("/register", async (req, res) => {
       res.send({ massage: "user exists", registration: false });
     } else {
       let entityCheck = await Entity.findOne({ name: entity });
-      console.log("test2", entityCheck);
       if (!entityCheck) {
         entityCheck = new Entity({
           name: entity,

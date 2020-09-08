@@ -100,13 +100,11 @@ const findCandidate = async (email) => {
   return candidate;
 };
 sio.on("connection", function (socket) {
-  findCandidate(socket.request.session.user.email);
+  //findCandidate(socket.request.session.user.email);
   socket.on("message", function () {
     sio.emit("message");
   });
-  socket.on("createMessage", function () {
-    
-  });
+  socket.on("createMessage", function () {});
   socket.on("disconnect", function () {
     sio.emit("Пользователь отсоединился");
   });

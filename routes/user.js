@@ -5,7 +5,8 @@ const auth = require("../middleware/auth");
 router.get("/", auth, (req, res) => {
   console.log(req.session);
   res.status(200);
-  res.send(req.session);
+  console.log("user...", req.user);
+  res.send({ ...req.user._doc, isAuthenticated: req.session.isAuthenticated });
 });
 
 module.exports = router;

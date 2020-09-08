@@ -14,11 +14,16 @@ router.get("/:id", auth, async (req, res) => {
   res.send(process);
 });
 router.post("/add", auth, async (req, res) => {
+  const modStages = req.body.stages.map((el) => ({
+    participant: el.participant.map((par) => ({ email: par, vote: "waiting" })),
+  }));
   const process = new Process({
+    result: "process",
     title: req.body.title,
-    stages: req.body.stages,
+    stages: modStages,
     state: req.body.state,
     userId: req.user,
+    date: req.body.date,
   });
   try {
     process.save();
@@ -27,7 +32,7 @@ router.post("/add", auth, async (req, res) => {
     const participants = process.stages.reduce(
       (acc, el, i) => [
         ...acc,
-        ...el.participant.map((el) => ({ email: el, step: i + 1 })),
+        ...el.participant.map((par) => ({ par, step: i + 1 })),
       ],
       []
     );
@@ -37,6 +42,7 @@ router.post("/add", auth, async (req, res) => {
       await currentUser.addToSolutions({
         title: process.title,
         vote: "waiting",
+        date: process.date,
         stage: {
           amount: process.stages.length,
           status: "progress",
