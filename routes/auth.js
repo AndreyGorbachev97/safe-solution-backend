@@ -14,6 +14,14 @@ router.get("/login", async (req, res) => {
   });
 });
 
+router.get("/check", async (req, res) => {
+  if (req.session.isAuthenticated) {
+    res.send(req.session.isAuthenticated);
+  } else {
+    res.send(false);
+  }
+});
+
 router.get("/logout", async (req, res) => {
   req.session.destroy(() => {
     res.send({ isAuthenticated: false });

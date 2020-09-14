@@ -5,8 +5,7 @@ const router = Router();
 const auth = require("../middleware/auth");
 
 router.get("/", auth, async (req, res) => {
-  const processes = await Process.find();
-  res.send(processes);
+  res.send(req.user.processes);
 });
 
 router.get("/:id", auth, async (req, res) => {
@@ -14,13 +13,11 @@ router.get("/:id", auth, async (req, res) => {
   res.send(process);
 });
 router.post("/add", auth, async (req, res) => {
-  const modStages = req.body.stages.map((el) => ({
-    participant: el.participant.map((par) => ({ email: par, vote: "waiting" })),
-  }));
   const process = new Process({
     result: "process",
     title: req.body.title,
-    stages: modStages,
+    stages: req.body.stages,
+    currentStep: 0,
     state: req.body.state,
     userId: req.user,
     date: req.body.date,
@@ -29,16 +26,19 @@ router.post("/add", auth, async (req, res) => {
     process.save();
     await req.user.addToProcess(process);
     //достаем всех участников и номера этопов в которых они учавствуют
+    console.log("stages", process.stages);
     const participants = process.stages.reduce(
       (acc, el, i) => [
         ...acc,
-        ...el.participant.map((par) => ({ par, step: i + 1 })),
+        ...el.participant.map((par) => ({ ...par, step: i + 1 })),
       ],
       []
     );
     //добавляем в бд инф пользователям о том, что они учавствуют в процессе
     for (let i = 0; i < participants.length; i++) {
+      console.log("email", participants[i].email);
       const currentUser = await User.findOne({ email: participants[i].email });
+      console.log("currentUser", currentUser);
       await currentUser.addToSolutions({
         title: process.title,
         vote: "waiting",

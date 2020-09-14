@@ -40,6 +40,10 @@ const userSchema = new Schema({
           type: String,
           required: true,
         },
+        currentStep: {
+          type: Number,
+          required: true,
+        },
         title: {
           type: String,
           required: true,
@@ -72,6 +76,7 @@ userSchema.methods.addToProcess = function (process) {
       processId: process._id,
       result: process.result,
       date: process.date,
+      currentStep: process.currentStep,
     },
   ];
   console.log("date", process.date);

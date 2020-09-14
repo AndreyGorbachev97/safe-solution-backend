@@ -21,6 +21,10 @@ const process = new Schema({
     type: String,
     required: true,
   },
+  currentStep: {
+    type: Number,
+    required: true,
+  },
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
