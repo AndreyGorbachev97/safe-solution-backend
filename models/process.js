@@ -9,6 +9,10 @@ const process = new Schema({
     type: String,
     required: true,
   },
+  pathToDocument: {
+    type: String, 
+    require: true,
+  },
   stages: {
     type: Array,
     required: true,

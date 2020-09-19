@@ -3,9 +3,35 @@ const Process = require("../models/process");
 const User = require("../models/user");
 const router = Router();
 const auth = require("../middleware/auth");
+const multer = require("multer");
+const path = require("path");
+const appDir = path.dirname(require.main.filename);
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    // '/files' это директория в которую будут сохранятся файлы
+    cb(null, "dist/files/");
+  },
+  filename: (req, file, cb) => {
+    // Возьмем оригинальное название файла, и под этим же названием сохраним его на сервере
+    const { originalname } = file;
+    cb(null, originalname);
+  },
+});
+const upload = multer({ storage: storage });
 
 router.get("/", auth, async (req, res) => {
   res.send(req.user.processes);
+});
+
+router.get("/download", auth, async (req, res) => {
+  const file = appDir + "/dist/files/Informatsionnoe_pismo (1).docx";
+  console.log("file", file);
+  res.download(file);
+});
+
+router.post("/addFile", upload.single("file"), async (req, res) => {
+  res.json({ status: "Saved" });
 });
 
 router.get("/:id", auth, async (req, res) => {
@@ -13,8 +39,10 @@ router.get("/:id", auth, async (req, res) => {
   res.send(process);
 });
 router.post("/add", auth, async (req, res) => {
+  const pathToDocument = `${appDir}/dist/files/${req.body.fileName}`;
   const process = new Process({
     result: "process",
+    pathToDocument,
     title: req.body.title,
     stages: req.body.stages,
     currentStep: 0,
@@ -43,6 +71,7 @@ router.post("/add", auth, async (req, res) => {
         title: process.title,
         vote: "waiting",
         date: process.date,
+        pathToDocument,
         stage: {
           amount: process.stages.length,
           status: "progress",

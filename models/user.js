@@ -26,6 +26,7 @@ const userSchema = new Schema({
       date: String,
       title: String,
       vote: String,
+      pathToDocument: String,
       stage: {
         amount: Number,
         status: String,
@@ -56,6 +57,10 @@ const userSchema = new Schema({
           type: String,
           required: true,
         },
+        pathToDocument: {
+          type: String,
+          required: true,
+        },
         processId: {
           type: Schema.Types.ObjectId,
           ref: "Process",
@@ -76,6 +81,7 @@ userSchema.methods.addToProcess = function (process) {
       processId: process._id,
       result: process.result,
       date: process.date,
+      pathToDocument: process.pathToDocument,
       currentStep: process.currentStep,
     },
   ];
