@@ -39,7 +39,7 @@ router.get("/:id", auth, async (req, res) => {
   res.send(process);
 });
 router.post("/add", auth, async (req, res) => {
-  const pathToDocument = `${appDir}/dist/files/${req.body.fileName}`;
+  const pathToDocument = `/dist/files/${req.body.fileName}`;
   const process = new Process({
     result: "process",
     pathToDocument,

@@ -36,8 +36,8 @@ router.post("/login", async (req, res) => {
     if (candidate) {
       const areSame = await bcrypt.compare(password, candidate.password);
       if (areSame) {
-        // const token = jwt.sign(candidate._id.toString(), JWT_SCRET);
         req.session.user = candidate;
+        console.log("session1", req.session);
         req.session.isAuthenticated = true;
         req.session.save((err) => {
           if (err) {

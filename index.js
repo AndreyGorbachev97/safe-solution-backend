@@ -5,6 +5,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
 const User = require("./models/user");
 const csrf = require("csurf"); //пакет CSRF - защиты
+const helmet = require("helmet"); //защита от атак
 const mongoose = require("mongoose");
 const addRoutes = require("./routes/add");
 const homeRoutes = require("./routes/home");
@@ -83,6 +84,7 @@ app.use(sessionMiddleware);
 //   })
 // );
 //app.use(csrf());
+app.use(helmet());
 app.use(varMIddleware);
 app.use(userMiddleware);
 
