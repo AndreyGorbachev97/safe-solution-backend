@@ -25,7 +25,8 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.get("/download", auth, async (req, res) => {
-  const file = appDir + "/dist/files/Informatsionnoe_pismo (1).docx";
+  console.log("path: ", req.query);
+  const file = appDir + req.query.path;
   console.log("file", file);
   res.download(file);
 });
