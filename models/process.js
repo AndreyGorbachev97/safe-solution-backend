@@ -5,12 +5,12 @@ const process = new Schema({
     type: String,
     required: true,
   },
-  result: { 
+  result: {
     type: String,
     required: true,
   },
   pathToDocument: {
-    type: String, 
+    type: String,
     require: true,
   },
   stages: {
@@ -34,5 +34,21 @@ const process = new Schema({
     ref: "User",
   },
 });
+
+process.methods.addVote = function (payload) {
+  console.log("stages", this.stages[payload.step]);
+  const indexParticipant = this.stages[payload.step].participant.findIndex(
+    (el) => el.email === payload.email
+  );
+  console.log(indexParticipant);
+  this.stages[payload.step].participant[indexParticipant] = {
+    email: payload.email,
+    vote: payload.vote,
+    comment: payload.comment,
+  };
+  // console.log(this.stages[payload.step].participant[indexParticipant]);
+  console.log(this.stages);
+  return this.save();
+};
 
 module.exports = model("Process", process);

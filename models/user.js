@@ -27,6 +27,10 @@ const userSchema = new Schema({
       title: String,
       vote: String,
       pathToDocument: String,
+      processId: {
+        type: String,
+        required: true,
+      },
       stage: {
         amount: Number,
         status: String,

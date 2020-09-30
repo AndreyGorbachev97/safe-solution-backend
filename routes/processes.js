@@ -55,7 +55,6 @@ router.post("/add", auth, async (req, res) => {
     process.save();
     await req.user.addToProcess(process);
     //достаем всех участников и номера этопов в которых они учавствуют
-    console.log("stages", process.stages);
     const participants = process.stages.reduce(
       (acc, el, i) => [
         ...acc,
@@ -63,6 +62,7 @@ router.post("/add", auth, async (req, res) => {
       ],
       []
     );
+    console.log("participants", participants);
     //добавляем в бд инф пользователям о том, что они учавствуют в процессе
     for (let i = 0; i < participants.length; i++) {
       console.log("email", participants[i].email);
@@ -73,6 +73,7 @@ router.post("/add", auth, async (req, res) => {
         vote: "waiting",
         date: process.date,
         pathToDocument,
+        processId: process.id,
         stage: {
           amount: process.stages.length,
           status: "progress",
