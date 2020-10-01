@@ -9,7 +9,6 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  console.log(req.body);
   try {
     const process = await Process.findById(req.body.processId);
     const stages = process.stages;

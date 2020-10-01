@@ -38,57 +38,17 @@ const userSchema = new Schema({
       },
     },
   ],
-  processes: {
-    items: [
-      {
-        date: {
-          type: String,
-          required: true,
-        },
-        currentStep: {
-          type: Number,
-          required: true,
-        },
-        title: {
-          type: String,
-          required: true,
-        },
-        stages: {
-          type: Array,
-          required: true,
-        },
-        state: {
-          type: String,
-          required: true,
-        },
-        pathToDocument: {
-          type: String,
-          required: true,
-        },
-        processId: {
-          type: Schema.Types.ObjectId,
-          ref: "Process",
-          required: true,
-        },
-      },
-    ],
-  },
+  processes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Process",
+      required: true,
+    },
+  ],
 });
 
 userSchema.methods.addToProcess = function (process) {
-  this.processes.items = [
-    ...this.processes.items,
-    {
-      title: process.title,
-      stages: process.stages,
-      state: process.state,
-      processId: process._id,
-      result: process.result,
-      date: process.date,
-      pathToDocument: process.pathToDocument,
-      currentStep: process.currentStep,
-    },
-  ];
+  this.processes = [...this.processes, process._id];
   console.log("date", process.date);
   return this.save();
 };

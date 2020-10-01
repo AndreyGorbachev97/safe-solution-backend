@@ -83,7 +83,7 @@ router.post("/register", async (req, res) => {
         surname,
         entity,
         password: hashPassword,
-        processes: { items: [] },
+        processes: [],
       });
       await user.save();
       await entityCheck.addToMember(user);

@@ -21,7 +21,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.get("/", auth, async (req, res) => {
-  res.send(req.user.processes);
+  try {
+    const processes = [];
+    for (let i = 0; i < req.user.processes.length; i++) {
+      const process = await Process.findById(req.user.processes[i]._id);
+      processes.push(process);
+    }
+    res.send(processes);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 router.get("/download", auth, async (req, res) => {
@@ -39,6 +48,7 @@ router.get("/:id", auth, async (req, res) => {
   const process = await Process.findById(req.params.id);
   res.send(process);
 });
+
 router.post("/add", auth, async (req, res) => {
   const pathToDocument = `/dist/files/${req.body.fileName}`;
   const process = new Process({
