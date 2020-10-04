@@ -13,10 +13,22 @@ const process = new Schema({
     type: String,
     require: true,
   },
-  stages: {
-    type: Array,
-    required: true,
-  },
+  stages: [
+    {
+      percentageVotes: {
+        type: Number,
+        required: true,
+      },
+      status: {
+        type: String,
+        required: true,
+      },
+      participant: {
+        type: Array,
+        required: true,
+      }
+    },
+  ],
   state: {
     type: String,
     required: true,

@@ -68,7 +68,7 @@ router.post("/add", auth, async (req, res) => {
     const participants = process.stages.reduce(
       (acc, el, i) => [
         ...acc,
-        ...el.participant.map((par) => ({ ...par, step: i + 1 })),
+        ...el.participant.map((par) => ({ ...par, step: i + 1, status: el.status })),
       ],
       []
     );
