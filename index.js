@@ -96,7 +96,7 @@ app.use("/processes", processesRoutes);
 app.use("/solutions", solutionsRoutes);
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
-app.use("/emtity", entityRoutes);
+app.use("/entity", entityRoutes);
 
 const findCandidate = async (email) => {
   const candidate = await User.findOne({ email });

@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const Process = require("../models/process");
 const User = require("../models/user");
+const Solution = require("../models/solution");
 const router = Router();
 const auth = require("../middleware/auth");
 const multer = require("multer");
