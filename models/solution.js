@@ -5,6 +5,10 @@ const solution = new Schema({
   title: String,
   vote: String,
   pathToDocument: String,
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   processId: {
     type: String,
     required: true,

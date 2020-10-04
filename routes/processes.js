@@ -69,7 +69,11 @@ router.post("/add", auth, async (req, res) => {
     const participants = process.stages.reduce(
       (acc, el, i) => [
         ...acc,
-        ...el.participant.map((par) => ({ ...par, step: i + 1, status: el.status })),
+        ...el.participant.map((par) => ({
+          ...par,
+          step: i + 1,
+          status: el.status,
+        })),
       ],
       []
     );
@@ -79,6 +83,20 @@ router.post("/add", auth, async (req, res) => {
       console.log("email", participants[i].email);
       const currentUser = await User.findOne({ email: participants[i].email });
       console.log("currentUser", currentUser);
+      const solution = new Solution({
+        title: process.title,
+        vote: "waiting",
+        date: process.date,
+        pathToDocument,
+        userId: participants[i].userId,
+        processId: process.id,
+        stage: {
+          amount: process.stages.length,
+          status: "progress",
+          step: participants[i].step,
+        },
+      });
+      solution.save();
       await currentUser.addToSolutions({
         title: process.title,
         vote: "waiting",
