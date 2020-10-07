@@ -23,14 +23,11 @@ const upload = multer({ storage: storage });
 
 router.get("/", auth, async (req, res) => {
   try {
-    const processes = [];
-    for (let i = 0; i < req.user.processes.length; i++) {
-      const process = await Process.findById(req.user.processes[i]._id);
-      processes.push(process);
-    }
+    const processes = await Process.find({ userId: req.user.id });
+    res.status(200);
     res.send(processes);
   } catch (e) {
-    console.log(e);
+    res.send(e);
   }
 });
 
@@ -47,24 +44,24 @@ router.post("/addFile", upload.single("file"), async (req, res) => {
 
 router.get("/:id", auth, async (req, res) => {
   const process = await Process.findById(req.params.id);
+  res.status(200);
   res.send(process);
 });
 
 router.post("/add", auth, async (req, res) => {
-  const pathToDocument = `/dist/files/${req.body.fileName}`;
-  const process = new Process({
-    result: "process",
-    pathToDocument,
-    title: req.body.title,
-    stages: req.body.stages,
-    currentStep: 0,
-    state: req.body.state,
-    userId: req.user,
-    date: req.body.date,
-  });
   try {
+    const pathToDocument = `/dist/files/${req.body.fileName}`;
+    const process = new Process({
+      result: "process",
+      pathToDocument,
+      title: req.body.title,
+      stages: req.body.stages,
+      currentStep: 0,
+      state: req.body.state,
+      userId: req.user,
+      date: req.body.date,
+    });
     process.save();
-    await req.user.addToProcess(process);
     //достаем всех участников и номера этопов в которых они учавствуют
     const participants = process.stages.reduce(
       (acc, el, i) => [
@@ -77,12 +74,8 @@ router.post("/add", auth, async (req, res) => {
       ],
       []
     );
-    console.log("participants", participants);
     //добавляем в бд инф пользователям о том, что они учавствуют в процессе
     for (let i = 0; i < participants.length; i++) {
-      console.log("email", participants[i].email);
-      const currentUser = await User.findOne({ email: participants[i].email });
-      console.log("currentUser", currentUser);
       const solution = new Solution({
         title: process.title,
         vote: "waiting",
@@ -97,18 +90,6 @@ router.post("/add", auth, async (req, res) => {
         },
       });
       solution.save();
-      await currentUser.addToSolutions({
-        title: process.title,
-        vote: "waiting",
-        date: process.date,
-        pathToDocument,
-        processId: process.id,
-        stage: {
-          amount: process.stages.length,
-          status: "progress",
-          step: participants[i].step,
-        },
-      });
     }
 
     res.status(200);

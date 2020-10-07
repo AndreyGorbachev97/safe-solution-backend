@@ -3,6 +3,7 @@ const router = Router();
 const auth = require("../middleware/auth");
 const Process = require("../models/process");
 const User = require("../models/user");
+const Solution = require("../models/solution");
 
 const determinantOfStatus = (stage) => {
   const waiting = stage.participant.find((el) => el.vote === "waiting");
@@ -14,8 +15,14 @@ const determinantOfStatus = (stage) => {
   return "notSuccess";
 };
 
-router.get("/", auth, async (req, res) => {
-  res.send(req.user.solutions);
+router.get("/", async (req, res) => {
+  try {
+    const solutions = await Solution.find({ userId: req.user.id });
+    res.status(200);
+    res.send(solutions);
+  } catch (e) {
+    res.send(e);
+  }
 });
 
 router.post("/", auth, async (req, res) => {
