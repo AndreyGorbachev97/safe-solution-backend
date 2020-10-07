@@ -8,7 +8,7 @@ const Solution = require("../models/solution");
 const determinantOfStatus = (stage) => {
   const waiting = stage.participant.find((el) => el.vote === "waiting");
   if (waiting) return "inWork";
-  const agree = stage.participant.filter((el) => el.vote === "За").length;
+  const agree = stage.participant.filter((el) => el.vote === "approve").length;
   // процент давших ответ "За"
   const percentageOfConsonants = (agree * 100) / stage.participant.length;
   if (percentageOfConsonants >= stage.percentageVotes) return "success";
@@ -18,6 +18,7 @@ const determinantOfStatus = (stage) => {
 router.get("/", async (req, res) => {
   try {
     const solutions = await Solution.find({ userId: req.user.id });
+    console.log(solutions);
     res.status(200);
     res.send(solutions);
   } catch (e) {
@@ -44,7 +45,9 @@ router.post("/", auth, async (req, res) => {
     if (stages[req.body.step + 1] && statusStage === "success")
       stages[req.body.step + 1].status = "inWork";
     //сохранение изменений
+    await Solution.findByIdAndUpdate(req.body.id, { vote: req.body.vote });
     await Process.findByIdAndUpdate(req.body.processId, { stages: stages });
+    res.status(200);
   } catch (e) {
     console.log(e);
   }
