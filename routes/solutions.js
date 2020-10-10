@@ -30,6 +30,7 @@ router.post("/", auth, async (req, res) => {
   try {
     const process = await Process.findById(req.body.processId);
     const stages = process.stages;
+    console.log("body", req.body);
     const indexParticipant = process.stages[
       req.body.step
     ].participant.findIndex((el) => el.email === req.body.email);
@@ -42,12 +43,36 @@ router.post("/", auth, async (req, res) => {
     //смена статуса этапа
     const statusStage = determinantOfStatus(stages[req.body.step]);
     stages[req.body.step].status = statusStage;
-    if (stages[req.body.step + 1] && statusStage === "success")
+    if (stages[req.body.step + 1] && statusStage === "success") {
+      console.log("i:", req.body.step);
       stages[req.body.step + 1].status = "inWork";
+      //достаем участников этапа и номера этапов в которых они учавствуют
+      const participants = process.stages[req.body.step + 1].participant.map(
+        (par) => ({
+          ...par,
+          step: req.body.step + 1,
+        })
+      );
+      console.log("participants:", participants);
+      //добавляем в бд инф пользователям о том, что они учавствуют в процессе
+      for (let i = 0; i < participants.length; i++) {
+        const solution = new Solution({
+          title: process.title,
+          vote: "waiting",
+          date: process.date,
+          pathToDocument: process.pathToDocument,
+          userId: participants[i].userId,
+          processId: process.id,
+          amount: process.stages.length,
+          step: participants[i].step,
+        });
+        solution.save();
+      }
+    }
     //сохранение изменений
     await Solution.findByIdAndUpdate(req.body.id, { vote: req.body.vote });
     await Process.findByIdAndUpdate(req.body.processId, { stages: stages });
-    res.status(200);
+    res.send();
   } catch (e) {
     console.log(e);
   }

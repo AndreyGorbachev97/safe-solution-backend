@@ -5,6 +5,7 @@ const solution = new Schema({
   title: String,
   vote: String,
   pathToDocument: String,
+  step: Number,
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -12,11 +13,6 @@ const solution = new Schema({
   processId: {
     type: String,
     required: true,
-  },
-  stage: {
-    amount: Number,
-    status: String,
-    step: Number,
   },
 });
 

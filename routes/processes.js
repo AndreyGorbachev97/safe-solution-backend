@@ -62,18 +62,11 @@ router.post("/add", auth, async (req, res) => {
       date: req.body.date,
     });
     process.save();
-    //достаем всех участников и номера этопов в которых они учавствуют
-    const participants = process.stages.reduce(
-      (acc, el, i) => [
-        ...acc,
-        ...el.participant.map((par) => ({
-          ...par,
-          step: i + 1,
-          status: el.status,
-        })),
-      ],
-      []
-    );
+    //достаем участников 1го этапа и номера этапов в которых они учавствуют
+    const participants = process.stages[0].participant.map((par) => ({
+      ...par,
+      step: 0,
+    }));
     //добавляем в бд инф пользователям о том, что они учавствуют в процессе
     for (let i = 0; i < participants.length; i++) {
       const solution = new Solution({
@@ -83,11 +76,8 @@ router.post("/add", auth, async (req, res) => {
         pathToDocument,
         userId: participants[i].userId,
         processId: process.id,
-        stage: {
-          amount: process.stages.length,
-          status: "progress",
-          step: participants[i].step,
-        },
+        amount: process.stages.length,
+        step: participants[i].step,
       });
       solution.save();
     }
