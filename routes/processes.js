@@ -11,7 +11,7 @@ const appDir = path.dirname(require.main.filename);
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     // '/files' это директория в которую будут сохранятся файлы
-    cb(null, "dist/files/");
+    cb(null, "files/");
   },
   filename: (req, file, cb) => {
     // Возьмем оригинальное название файла, и под этим же названием сохраним его на сервере
@@ -50,7 +50,7 @@ router.get("/:id", auth, async (req, res) => {
 
 router.post("/add", auth, async (req, res) => {
   try {
-    const pathToDocument = `/dist/files/${req.body.fileName}`;
+    const pathToDocument = `/files/${req.body.fileName}`;
     const process = new Process({
       result: "process",
       pathToDocument,
