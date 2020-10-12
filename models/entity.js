@@ -21,7 +21,6 @@ const entitySchema = new Schema({
 });
 
 entitySchema.methods.addToMember = function (user) {
-  console.log("user", user.email);
   this.members = [...this.members, { email: user.email, userId: user._id }];
   return this.save();
 };

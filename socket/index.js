@@ -17,7 +17,6 @@ module.exports = function (server) {
       .collection("users")
       .findOne({}, function (findErr, result) {
         if (findErr) throw findErr;
-        console.log(result);
         client.close();
       });
 

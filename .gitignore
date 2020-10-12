@@ -2,6 +2,7 @@
 node_modules
 keys.dev.js
 /dist
+/files
 
 # local env files
 .env.local

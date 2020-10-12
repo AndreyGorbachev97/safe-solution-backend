@@ -18,7 +18,6 @@ const determinantOfStatus = (stage) => {
 router.get("/", async (req, res) => {
   try {
     const solutions = await Solution.find({ userId: req.user.id });
-    console.log(solutions);
     res.status(200);
     res.send(solutions);
   } catch (e) {
@@ -30,7 +29,6 @@ router.post("/", auth, async (req, res) => {
   try {
     const process = await Process.findById(req.body.processId);
     const stages = process.stages;
-    console.log("body", req.body);
     const indexParticipant = process.stages[
       req.body.step
     ].participant.findIndex((el) => el.email === req.body.email);
@@ -44,7 +42,6 @@ router.post("/", auth, async (req, res) => {
     const statusStage = determinantOfStatus(stages[req.body.step]);
     stages[req.body.step].status = statusStage;
     if (stages[req.body.step + 1] && statusStage === "success") {
-      console.log("i:", req.body.step);
       stages[req.body.step + 1].status = "inWork";
       //достаем участников этапа и номера этапов в которых они учавствуют
       const participants = process.stages[req.body.step + 1].participant.map(
@@ -53,7 +50,6 @@ router.post("/", auth, async (req, res) => {
           step: req.body.step + 1,
         })
       );
-      console.log("participants:", participants);
       //добавляем в бд инф пользователям о том, что они учавствуют в процессе
       for (let i = 0; i < participants.length; i++) {
         const solution = new Solution({

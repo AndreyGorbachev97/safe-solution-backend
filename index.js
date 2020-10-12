@@ -4,6 +4,7 @@ cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
 const User = require("./models/user");
+const Process = require("./models/process");
 const csrf = require("csurf"); //пакет CSRF - защиты
 const helmet = require("helmet"); //защита от атак
 const mongoose = require("mongoose");
@@ -100,17 +101,36 @@ app.use("/entity", entityRoutes);
 
 const findCandidate = async (email) => {
   const candidate = await User.findOne({ email });
-  console.log("candidate", candidate);
   return candidate;
 };
+
+//работа с сокетами
+const m = (name, text, id) => ({ name, text, id });
 sio.on("connection", function (socket) {
+  console.log("connection");
   //findCandidate(socket.request.session.user.email);
+  socket.on("solution", async (data, cb) => {
+    if (!data.name || !data.room) {
+      return cb('Данные некорректны')
+    }
+
+    cb({ userId: socket.id });
+    console.log('new room:', data.room);
+    socket.emit('changeSolution', m('admin', `Добро пожаловать ${data.name}`))
+    socket.join(data.room);
+    socket.to(data.room).emit('changeSolution', `Пользователь ${data.name} подключен`)
+  });
+  socket.on("answersSolutionRoom", (data, cb) => {
+    //оповещаем всех, что процесс обновлен
+    console.log('update process in ', data.room);
+    sio.to(data.room).emit('changeSolution', data.room);
+  });
   socket.on("message", function () {
     sio.emit("message");
   });
-  socket.on("createMessage", function () {});
+  socket.on("createMessage", function () { });
   socket.on("disconnect", function () {
-    sio.emit("Пользователь отсоединился");
+    sio.emit('Пользователь отсоединился');
   });
 });
 

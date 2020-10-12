@@ -32,9 +32,7 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.get("/download", auth, async (req, res) => {
-  console.log("path: ", req.query);
   const file = appDir + req.query.path;
-  console.log("file", file);
   res.download(file);
 });
 

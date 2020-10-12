@@ -13,7 +13,6 @@ router.post('/', auth, async (req, res) => {
     });
     try {
         process.save();
-        console.log("process: ", process);
         res.status(200);
         res.send(process);
     } catch (e) {
