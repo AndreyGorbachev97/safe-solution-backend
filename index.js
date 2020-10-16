@@ -26,22 +26,22 @@ const app = express();
 const server = require("http").createServer(app);
 var sio = require("socket.io")(server);
 
-app.use(
-  cors({
-    origin: ["http://192.168.43.23:8080", "http://localhost:8080", "https://discussion-doc.ru/"],
-    credentials: true,
-  })
-);
-// app.use(function (req, res, next) {
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-//   res.setHeader("Access-Control-Allow-Origin", "http://192.168.43.23:8080");
-//   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "origin, content-type, accept, authorization"
-//   );
-//   return next();
-// });
+// app.use(
+//   cors({
+//     origin: ["http://192.168.43.23:8080", "http://localhost:8080", "https://discussion-doc.ru/"],
+//     credentials: true,
+//   })
+// );
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Origin", "https://discussion-doc.ru");
+  res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "origin, content-type, accept, authorization"
+  );
+  return next();
+});
 
 //store для добавления сессий в базу данных
 const store = require("./lib/sessionStore");
