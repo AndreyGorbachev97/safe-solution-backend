@@ -18,6 +18,7 @@ const userRoutes = require("./routes/user");
 const bodyParser = require("body-parser");
 const varMIddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
+const socketUser = require("./socket/users")();
 const keys = require("./keys");
 
 const MONGODB_URI = keys.MONGODB_URI;
@@ -107,8 +108,21 @@ const findCandidate = async (email) => {
 //работа с сокетами
 const m = (name, text, id) => ({ name, text, id });
 sio.on("connection", function (socket) {
-  console.log("connection");
+  socketUser.remove(socket.id);
+  socketUser.add({
+    email: socket.request.session.user.email,
+    id: socket.request.session.user._id,
+    socketId: socket.id,
+  });
+  console.log(socketUser.getFull());
   //findCandidate(socket.request.session.user.email);
+  socket.on("process", async (data, cb) => {
+    console.log('data:', data);
+    console.log('users: ', socketUser.getFind(data.ids));
+    socketUser.getFind(data.ids).forEach((user) => {
+      socket.to(user.socketId).emit('changeProcess', { user: data.user, status: data.status });
+    });
+  })
   socket.on("solution", async (data, cb) => {
     if (!data.name || !data.room) {
       return cb('Данные некорректны')
@@ -122,7 +136,8 @@ sio.on("connection", function (socket) {
   });
   socket.on("answersSolutionRoom", (data, cb) => {
     //оповещаем всех, что процесс обновлен
-    console.log('update process in ', data.room);
+    console.log("update process in ", data.room);
+    console.log("author: ", data.author);
     sio.to(data.room).emit('changeSolution', data.room);
   });
   socket.on("message", function () {
@@ -130,9 +145,11 @@ sio.on("connection", function (socket) {
   });
   socket.on("createMessage", function () { });
   socket.on("disconnect", function () {
-    sio.emit('Пользователь отсоединился');
+    const user = socketUser.remove(socket.id);
+    console.log('Пользователь отсоединился', user);
   });
 });
+
 
 const PORT = process.env.PORT || 3000;
 

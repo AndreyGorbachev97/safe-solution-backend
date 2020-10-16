@@ -6,6 +6,11 @@ const solution = new Schema({
   vote: String,
   pathToDocument: String,
   step: Number,
+  author: {
+    name: String,
+    surname: String,
+    id: String,
+  },
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",

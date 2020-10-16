@@ -41,7 +41,7 @@ const process = new Schema({
     type: Number,
     required: true,
   },
-  userId: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },

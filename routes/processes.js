@@ -23,7 +23,7 @@ const upload = multer({ storage: storage });
 
 router.get("/", auth, async (req, res) => {
   try {
-    const processes = await Process.find({ userId: req.user.id });
+    const processes = await Process.find({ user: req.user.id });
     res.status(200);
     res.send(processes);
   } catch (e) {
@@ -56,7 +56,7 @@ router.post("/add", auth, async (req, res) => {
       stages: req.body.stages,
       currentStep: 0,
       state: req.body.state,
-      userId: req.user,
+      user: req.user,
       date: req.body.date,
     });
     process.save();
@@ -72,6 +72,7 @@ router.post("/add", auth, async (req, res) => {
         vote: "waiting",
         date: process.date,
         pathToDocument,
+        author: { name: process.user.name, surname: process.user.surname, id: process.user._id },
         userId: participants[i].userId,
         processId: process.id,
         amount: process.stages.length,
