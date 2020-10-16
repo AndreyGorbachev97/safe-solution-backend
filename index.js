@@ -28,7 +28,7 @@ var sio = require("socket.io")(server);
 
 app.use(
   cors({
-    origin: ["http://192.168.43.23:8080", "http://localhost:8080"],
+    origin: ["http://192.168.43.23:8080", "http://localhost:8080", "https://discussion-doc.ru"],
     credentials: true,
   })
 );
