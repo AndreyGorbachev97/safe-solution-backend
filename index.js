@@ -32,16 +32,31 @@ var sio = require("socket.io")(server);
 //     credentials: true,
 //   })
 // );
-app.use(function (req, res, next) {
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Origin", "https://discussion-doc.ru");
-  res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "origin, content-type, accept, authorization"
-  );
-  return next();
-});
+
+// app.use(function (req, res, next) {
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
+//   res.setHeader("Access-Control-Allow-Origin", "https://discussion-doc.ru");
+//   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+//   res.setHeader(
+//     "Access-Control-Allow-Headers",
+//     "origin, content-type, accept, authorization"
+//   );
+//   return next();
+// });
+
+const whiteList = {
+  "https://discussion-doc.ru": true,  
+};
+const allowCrossDomain = function(req, res, next) {    
+      if(whiteList[req.headers.origin]){            
+          res.header('Access-Control-Allow-Credentials', true);
+          res.header('Access-Control-Allow-Origin', req.headers.origin);
+          res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+          res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept');        
+          next();
+      } 
+};
+app.use(allowCrossDomain);
 
 //store для добавления сессий в базу данных
 const store = require("./lib/sessionStore");
