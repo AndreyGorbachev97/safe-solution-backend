@@ -26,6 +26,8 @@ const app = express();
 const server = require("http").createServer(app);
 var sio = require("socket.io")(server);
 
+app.use(cors());
+app.options('*', cors());
 // app.use(
 //   cors({
 //     origin: ["http://192.168.43.23:8080", "http://localhost:8080", "https://discussion-doc.ru/"],
@@ -44,19 +46,19 @@ var sio = require("socket.io")(server);
 //   return next();
 // });
 
-const whiteList = {
-  "https://discussion-doc.ru": true,  
-};
-const allowCrossDomain = function(req, res, next) {    
-      if(whiteList[req.headers.origin]){            
-          res.header('Access-Control-Allow-Credentials', true);
-          res.header('Access-Control-Allow-Origin', req.headers.origin);
-          res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-          res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept');        
-          next();
-      } 
-};
-app.use(allowCrossDomain);
+// const whiteList = {
+//   "https://discussion-doc.ru": true,  
+// };
+// const allowCrossDomain = function(req, res, next) {    
+//       if(whiteList[req.headers.origin]){            
+//           res.header('Access-Control-Allow-Credentials', true);
+//           res.header('Access-Control-Allow-Origin', req.headers.origin);
+//           res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+//           res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept');        
+//           next();
+//       } 
+// };
+// app.use(allowCrossDomain);
 
 //store для добавления сессий в базу данных
 const store = require("./lib/sessionStore");
