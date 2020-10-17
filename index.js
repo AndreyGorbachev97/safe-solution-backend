@@ -1,8 +1,6 @@
 const express = require("express");
 const path = require("path");
 cors = require("cors");
-const session = require("express-session");
-const MongoStore = require("connect-mongodb-session")(session);
 const User = require("./models/user");
 const Process = require("./models/process");
 const csrf = require("csurf"); //пакет CSRF - защиты
@@ -20,12 +18,24 @@ const varMIddleware = require("./middleware/variables");
 const userMiddleware = require("./middleware/user");
 const socketUser = require("./socket/users")();
 const keys = require("./keys");
+const session = require("express-session");
+const MongoStore = require("connect-mongodb-session")(session);
 
 const MONGODB_URI = keys.MONGODB_URI;
+
 const app = express();
 const server = require("http").createServer(app);
-var sio = require("socket.io")(server);
 
+const store = new MongoStore({
+  collection: "sessions",
+  uri: keys.MONGODB_URI,
+});
+
+store.on('error', function(error) {
+  console.log('error: ', error);
+});
+
+var sio = require("socket.io")(server);
 
 app.use(
   cors({
@@ -37,7 +47,7 @@ app.use(
 // app.use(function (req, res, next) {
 
 //     // Website you wish to allow to connect
-//     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
+//     res.setHeader('Access-Control-Allow-Origin', 'http://192.168.43.23:8080');
 
 //     // Request methods you wish to allow
 //     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -79,7 +89,6 @@ app.use(
 // app.use(allowCrossDomain);
 
 //store для добавления сессий в базу данных
-const store = require("./lib/sessionStore");
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
@@ -88,13 +97,12 @@ const sessionMiddleware = session({
   secret: keys.SESSION_SECRET,
   key: "sid",
   cookie: {
-    path: "/",
-    _expires: null,
-    originalMaxAge: null,
-    httpOnly: true,
+    maxAge: 604800000, //7 days in miliseconds
+    secure: 'auto',
+    sameSite: 'none',
   },
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   store,
 });
 

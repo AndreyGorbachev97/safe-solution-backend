@@ -44,6 +44,7 @@ router.post("/login", async (req, res) => {
           }
           res.send({ login: true });
         });
+        console.log('session', req.session);
       } else {
         res.send({ message: "error login", login: false });
       }
