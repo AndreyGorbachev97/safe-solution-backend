@@ -98,11 +98,12 @@ app.use(express.urlencoded({ extended: true }));
 const sessionMiddleware = session({
   secret: keys.SESSION_SECRET,
   key: "sid",
+  proxy: true,
   cookie: {
     maxAge: 604800000, //7 days in miliseconds
     httpOnly: true,
     secure: true,
-    sameSite: 'strict',
+    sameSite: 'none',
   },
   resave: false,
   saveUninitialized: false,
