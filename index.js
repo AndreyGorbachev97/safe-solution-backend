@@ -29,7 +29,7 @@ var sio = require("socket.io")(server);
 
 app.use(
   cors({
-    origin: "*",
+    origin: "https://discussion-doc.ru:80",
     credentials: true,
   })
 );
