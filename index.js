@@ -29,7 +29,7 @@ var sio = require("socket.io")(server);
 
 app.use(
   cors({
-    origin: ["http://192.168.43.23:8080", "http://localhost:8080"],
+    origin: ["https://discussion-doc.ru", "http://192.168.43.23:8080", "http://localhost:8080"],
     credentials: true,
   })
 );
@@ -143,14 +143,14 @@ const findCandidate = async (email) => {
 //работа с сокетами
 const m = (name, text, id) => ({ name, text, id });
 sio.on("connection", function (socket) {
-  socketUser.remove(socket.id);
-  socketUser.add({
-    email: socket.request.session.user.email,
-    id: socket.request.session.user._id,
-    socketId: socket.id,
-  });
-  console.log(socketUser.getFull());
-  //findCandidate(socket.request.session.user.email);
+  if (socket.request.session.user) {
+    socketUser.add({
+      email: socket.request.session.user.email,
+      id: socket.request.session.user._id,
+      socketId: socket.id,
+    });
+    console.log(socketUser.getFull());
+  }
   socket.on("process", async (data, cb) => {
     console.log('data:', data);
     console.log('users: ', socketUser.getFind(data.ids));
