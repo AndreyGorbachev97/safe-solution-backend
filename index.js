@@ -20,10 +20,12 @@ const socketUser = require("./socket/users")();
 const keys = require("./keys");
 const session = require("express-session");
 const MongoStore = require("connect-mongodb-session")(session);
+const { shouldSendSameSiteNone } = require('should-send-same-site-none');
 
 const MONGODB_URI = keys.MONGODB_URI;
 
 const app = express();
+app.use(shouldSendSameSiteNone);
 const server = require("http").createServer(app);
 
 const store = new MongoStore({
