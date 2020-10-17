@@ -100,7 +100,7 @@ const sessionMiddleware = session({
     maxAge: 604800000, //7 days in miliseconds
     httpOnly: true,
     secure: true,
-    sameSite: 'none',
+    sameSite: false,
   },
   resave: true,
   saveUninitialized: true,
