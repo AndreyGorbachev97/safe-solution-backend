@@ -98,7 +98,7 @@ const sessionMiddleware = session({
   key: "sid",
   cookie: {
     maxAge: 604800000, //7 days in miliseconds
-    httpOnly: false,
+    httpOnly: true,
     secure: true,
     sameSite: 'none',
   },
