@@ -114,7 +114,8 @@ sio.on("connection", function (socket) {
     console.log('new room:', data.room);
     socket.emit('changeSolution', m('admin', `Добро пожаловать ${data.name}`))
     socket.join(data.room);
-    socket.to(data.room).emit('changeSolution', `Пользователь ${data.name} подключен`)
+    console.log(`Пользователь ${socket.id} подключен ${data.room}`);
+    // socket.to(data.room).emit('changeSolution', `Пользователь ${data.name} подключен`)
   });
   socket.on("answersSolutionRoom", (data, cb) => {
     //оповещаем всех, что процесс обновлен

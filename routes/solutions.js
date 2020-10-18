@@ -58,6 +58,7 @@ router.post("/", auth, async (req, res) => {
           date: process.date,
           pathToDocument: process.pathToDocument,
           userId: participants[i].userId,
+          author: { name: process.user.name, surname: process.user.surname, id: process.user._id },
           processId: process.id,
           amount: process.stages.length,
           step: participants[i].step,
