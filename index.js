@@ -33,7 +33,7 @@ const store = new MongoStore({
   uri: keys.MONGODB_URI,
 });
 
-store.on('error', function(error) {
+store.on('error', function (error) {
   console.log('error: ', error);
 });
 
@@ -45,50 +45,6 @@ app.use(
     credentials: true,
   })
 );
-
-// app.use(function (req, res, next) {
-
-//     // Website you wish to allow to connect
-//     res.setHeader('Access-Control-Allow-Origin', 'http://192.168.43.23:8080');
-
-//     // Request methods you wish to allow
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-//     // Request headers you wish to allow
-//     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-//     // Set to true if you need the website to include cookies in the requests sent
-//     // to the API (e.g. in case you use sessions)
-//     res.setHeader('Access-Control-Allow-Credentials', true);
-
-//     // Pass to next layer of middleware
-//     next();
-// });
-
-// app.use(function (req, res, next) {
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-//   res.setHeader("Access-Control-Allow-Origin", "https://discussion-doc.ru");
-//   res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "origin, content-type, accept, authorization"
-//   );
-//   return next();
-// });
-
-// const whiteList = {
-//   "https://discussion-doc.ru": true,  
-// };
-// const allowCrossDomain = function(req, res, next) {    
-//       if(whiteList[req.headers.origin]){            
-//           res.header('Access-Control-Allow-Credentials', true);
-//           res.header('Access-Control-Allow-Origin', req.headers.origin);
-//           res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-//           res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept');        
-//           next();
-//       } 
-// };
-// app.use(allowCrossDomain);
 
 //store для добавления сессий в базу данных
 
@@ -115,24 +71,6 @@ sio.use(function (socket, next) {
 });
 
 app.use(sessionMiddleware);
-
-// app.use(
-//   session({
-//     //строка на основе которой шифруетя сессия
-//     secret: keys.SESSION_SECRET,
-//     key: "sid",
-//     cookie: {
-//       path: "/",
-//       _expires: null,
-//       originalMaxAge: null,
-//       httpOnly: true,
-//     },
-//     resave: false,
-//     saveUninitialized: false,
-//     store,
-//   })
-// );
-//app.use(csrf());
 app.use(helmet());
 app.use(varMIddleware);
 app.use(userMiddleware);
@@ -161,11 +99,8 @@ sio.on("connection", function (socket) {
       id: socket.request.session.user._id,
       socketId: socket.id,
     });
-    console.log(socketUser.getFull());
   }
   socket.on("process", async (data, cb) => {
-    console.log('data:', data);
-    console.log('users: ', socketUser.getFind(data.ids));
     socketUser.getFind(data.ids).forEach((user) => {
       socket.to(user.socketId).emit('changeProcess', { user: data.user, status: data.status });
     });

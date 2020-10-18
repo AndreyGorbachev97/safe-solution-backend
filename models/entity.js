@@ -7,6 +7,14 @@ const entitySchema = new Schema({
   },
   members: [
     {
+      name: {
+        type: String,
+        required: true,
+      },
+      surname: {
+        type: String,
+        required: true,
+      },
       email: {
         type: String,
         required: true,
@@ -21,7 +29,12 @@ const entitySchema = new Schema({
 });
 
 entitySchema.methods.addToMember = function (user) {
-  this.members = [...this.members, { email: user.email, userId: user._id }];
+  this.members = [...this.members, { 
+    name: user.name,
+    surname: user.surname,
+    email: user.email,
+    userId: user._id,
+  }];
   return this.save();
 };
 
