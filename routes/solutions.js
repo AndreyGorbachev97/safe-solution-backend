@@ -4,6 +4,8 @@ const auth = require("../middleware/auth");
 const Process = require("../models/process");
 const User = require("../models/user");
 const Solution = require("../models/solution");
+const solution = require("../models/solution");
+const { findById } = require("../models/user");
 
 const determinantOfStatus = (stage) => {
   const waiting = stage.participant.find((el) => el.vote === "waiting");
@@ -67,9 +69,12 @@ router.post("/", auth, async (req, res) => {
       }
     }
     //сохранение изменений
+    console.log('test1');
     await Solution.findByIdAndUpdate(req.body.id, { vote: req.body.vote });
     await Process.findByIdAndUpdate(req.body.processId, { stages: stages });
-    res.send();
+    const solution = await Solution.findById(req.body.id);
+    res.status(200);
+    res.send(solution);
   } catch (e) {
     console.log(e);
   }
