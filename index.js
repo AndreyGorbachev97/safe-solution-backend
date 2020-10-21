@@ -58,8 +58,8 @@ const sessionMiddleware = session({
   cookie: {
     maxAge: 604800000, //7 days in miliseconds
     httpOnly: true,
-    // secure: true,
-    // sameSite: 'none',
+    secure: true,
+    sameSite: 'none',
   },
   resave: false,
   saveUninitialized: false,
