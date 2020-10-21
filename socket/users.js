@@ -25,11 +25,11 @@ class Users {
   }
 
   getFindId(id) { 
-    return this.users.find((user) => user.id.toString() === id);
+    return this.users.filter((user) => user.id.toString() === id);
   }
 
   getFind(ids) {
-    return ids.map((id) => this.users.find((user) => user.id.toString() === id));
+    return ids.reduce((acc, id) => [...acc, ...this.users.filter((user) => user.id.toString() === id)], []);
   }
 
   getByRoom(room) {

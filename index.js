@@ -58,8 +58,8 @@ const sessionMiddleware = session({
   cookie: {
     maxAge: 604800000, //7 days in miliseconds
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    // secure: true,
+    // sameSite: 'none',
   },
   resave: false,
   saveUninitialized: false,
@@ -121,7 +121,11 @@ sio.on("connection", function (socket) {
     const author = socketUser.getFindId(data.author.id);
     console.log(author);
     //если автор в сети, отправляем ему сообщение что процесс обновлен
-    if (author) socket.to(author.socketId).emit("changeProcess", "update process");
+    if (author[0]) {
+      author.forEach((a) => {
+        socket.to(a.socketId).emit("changeProcess", "update process");
+      })
+    }
     sio.to(data.room).emit("changeSolution", data.room);
   });
   socket.on("message", function () {
