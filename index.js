@@ -102,7 +102,7 @@ sio.on("connection", function (socket) {
   }
   socket.on("process", async (data, cb) => {
     socketUser.getFind(data.ids).forEach((user) => {
-      socket.to(user.socketId).emit('changeProcess', { user: data.user, status: data.status });
+      socket.to(user.socketId).emit('addedProcess', { user: data.user, status: data.status });
     });
   })
   socket.on("solution", async (data, cb) => {
@@ -111,7 +111,6 @@ sio.on("connection", function (socket) {
     }
 
     cb({ userId: socket.id });
-    console.log('new room:', data.room);
     socket.emit('changeSolution', m('admin', `Добро пожаловать ${data.name}`))
     socket.join(data.room);
     console.log(`Пользователь ${socket.id} подключен ${data.room}`);
@@ -119,9 +118,11 @@ sio.on("connection", function (socket) {
   });
   socket.on("answersSolutionRoom", (data, cb) => {
     //оповещаем всех, что процесс обновлен
-    console.log("update process in ", data.room);
-    console.log("author: ", data.author);
-    sio.to(data.room).emit('changeSolution', data.room);
+    const author = socketUser.getFindId(data.author.id);
+    console.log(author);
+    //если автор в сети, отправляем ему сообщение что процесс обновлен
+    if (author) socket.to(author.socketId).emit("changeProcess", "update process");
+    sio.to(data.room).emit("changeSolution", data.room);
   });
   socket.on("message", function () {
     sio.emit("message");

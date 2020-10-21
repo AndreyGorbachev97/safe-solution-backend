@@ -24,6 +24,10 @@ class Users {
     return this.users;
   }
 
+  getFindId(id) { 
+    return this.users.find((user) => user.id.toString() === id);
+  }
+
   getFind(ids) {
     return ids.map((id) => this.users.find((user) => user.id.toString() === id));
   }
