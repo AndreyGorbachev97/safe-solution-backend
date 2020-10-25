@@ -21,6 +21,18 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+router.get("/:id", async (req, res) => {
+  try {
+    console.log('id:', req.params.id);
+    const process = await Process.findById(req.params.id);
+    console.log('process:', process);
+    res.status(200);
+    res.send(process);
+  } catch (e) {
+    res.send(e);
+  }
+});
+
 router.get("/", auth, async (req, res) => {
   try {
     const processes = await Process.find({ user: req.user.id });

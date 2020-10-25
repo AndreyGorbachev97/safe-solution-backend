@@ -35,7 +35,10 @@ router.post("/", auth, async (req, res) => {
       req.body.step
     ].participant.findIndex((el) => el.email === req.body.email);
     //внос голоса на этап
+    console.log('name', req.body.name);
     stages[req.body.step].participant[indexParticipant] = {
+      name: req.body.name,
+      surname: req.body.surname,
       email: req.body.email,
       vote: req.body.vote,
       comment: req.body.comment,

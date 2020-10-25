@@ -58,8 +58,8 @@ const sessionMiddleware = session({
   cookie: {
     maxAge: 604800000, //7 days in miliseconds
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    // secure: true,
+    // sameSite: 'none',
   },
   resave: false,
   saveUninitialized: false,
@@ -111,7 +111,7 @@ sio.on("connection", function (socket) {
     }
 
     cb({ userId: socket.id });
-    socket.emit('changeSolution', m('admin', `Добро пожаловать ${data.name}`))
+    // socket.emit('changeSolution', m('admin', `Добро пожаловать ${data.name}`))
     socket.join(data.room);
     console.log(`Пользователь ${socket.id} подключен ${data.room}`);
     // socket.to(data.room).emit('changeSolution', `Пользователь ${data.name} подключен`)
@@ -122,6 +122,7 @@ sio.on("connection", function (socket) {
     console.log(author);
     //если автор в сети, отправляем ему сообщение что процесс обновлен
     if (author[0]) {
+      console.log("authors", author);
       author.forEach((a) => {
         socket.to(a.socketId).emit("changeProcess", "update process");
       })
