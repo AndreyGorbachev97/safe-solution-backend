@@ -58,8 +58,8 @@ const sessionMiddleware = session({
   cookie: {
     maxAge: 604800000, //7 days in miliseconds
     httpOnly: true,
-    // secure: true,
-    // sameSite: 'none',
+    secure: true,
+    sameSite: 'none',
   },
   resave: false,
   saveUninitialized: false,
@@ -119,7 +119,7 @@ sio.on("connection", function (socket) {
   socket.on("answersSolutionRoom", (data, cb) => {
     //оповещаем всех, что процесс обновлен
     const author = socketUser.getFindId(data.author.id);
-    console.log(author);
+    console.log('author', author);
     //если автор в сети, отправляем ему сообщение что процесс обновлен
     if (author[0]) {
       console.log("authors", author);
