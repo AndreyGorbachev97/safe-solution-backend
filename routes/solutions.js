@@ -6,6 +6,7 @@ const User = require("../models/user");
 const Solution = require("../models/solution");
 const solution = require("../models/solution");
 const { findById } = require("../models/user");
+const generatingList = require('../helpers/generatingReconciliationSheet');
 
 const determinantOfStatus = (stage) => {
   const waiting = stage.participant.find((el) => el.vote === "waiting");
@@ -70,6 +71,14 @@ router.post("/", auth, async (req, res) => {
         });
         solution.save();
       }
+    }
+    if (!stages[req.body.step + 1]) {
+      console.log('end');
+      console.log('stages', stages);
+      generatingList(stages);
+      stages.forEach((el) => {
+        console.log('participant', el.participant);
+      })
     }
     //сохранение изменений
     console.log('test1');
