@@ -21,7 +21,13 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.get("/:id", async (req, res) => {
+router.get("/download", auth, async (req, res) => {
+  console.log('test');
+  const file = appDir + req.query.path;
+  res.download(file);
+});
+
+router.get("/:id", auth, async (req, res) => {
   try {
     console.log('id:', req.params.id);
     const process = await Process.findById(req.params.id);
@@ -43,19 +49,8 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-router.get("/download", auth, async (req, res) => {
-  const file = appDir + req.query.path;
-  res.download(file);
-});
-
 router.post("/addFile", upload.single("file"), async (req, res) => {
   res.json({ status: "Saved" });
-});
-
-router.get("/:id", auth, async (req, res) => {
-  const process = await Process.findById(req.params.id);
-  res.status(200);
-  res.send(process);
 });
 
 router.post("/add", auth, async (req, res) => {

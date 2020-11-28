@@ -2,6 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const solution = new Schema({
   date: String,
+  dateVote: String,
   title: String,
   vote: String,
   pathToDocument: String,

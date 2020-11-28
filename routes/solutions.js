@@ -4,7 +4,6 @@ const auth = require("../middleware/auth");
 const Process = require("../models/process");
 const User = require("../models/user");
 const Solution = require("../models/solution");
-const solution = require("../models/solution");
 const { findById } = require("../models/user");
 const generatingList = require('../helpers/generatingReconciliationSheet');
 
@@ -43,6 +42,7 @@ router.post("/", auth, async (req, res) => {
       email: req.body.email,
       vote: req.body.vote,
       comment: req.body.comment,
+      dateVote: req.body.dateVote,
     };
     //смена статуса этапа
     const statusStage = determinantOfStatus(stages[req.body.step]);
@@ -81,8 +81,7 @@ router.post("/", auth, async (req, res) => {
       })
     }
     //сохранение изменений
-    console.log('test1');
-    await Solution.findByIdAndUpdate(req.body.id, { vote: req.body.vote });
+    await Solution.findByIdAndUpdate(req.body.id, { vote: req.body.vote, dateVote: req.body.dateVote });
     await Process.findByIdAndUpdate(req.body.processId, { stages: stages });
     const solution = await Solution.findById(req.body.id);
     res.status(200);
