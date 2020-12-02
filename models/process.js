@@ -13,6 +13,10 @@ const process = new Schema({
     type: String,
     require: true,
   },
+  pathToSheet: {
+    type: String,
+    require: true,
+  },
   stages: [
     {
       percentageVotes: {

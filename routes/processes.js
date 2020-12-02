@@ -59,6 +59,7 @@ router.post("/add", auth, async (req, res) => {
     const process = new Process({
       result: "process",
       pathToDocument,
+      pathToSheet: '',
       title: req.body.title,
       stages: req.body.stages,
       currentStep: 0,

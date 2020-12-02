@@ -1,7 +1,7 @@
 const fs = require('fs');
-const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, CellCount } = require("docx");
+const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType } = require("docx");
 
-module.exports = (stages) => {
+module.exports = (stages, path) => {
   const doc = new Document();
   const participants = stages.reduce((acc, el, i) =>
     [...acc, ...el.participant.map((part) => ({ ...part, stage: (i + 1).toString() }))]
@@ -28,7 +28,6 @@ module.exports = (stages) => {
       ],
     })
   });
-  console.log('rows', rows);
   const table = new Table({
     width: {
       size: 9535,
@@ -62,13 +61,8 @@ module.exports = (stages) => {
     children: [
       new Paragraph({
         children: [
-          new TextRun("Hello World"),
           new TextRun({
-            text: "Foo Bar",
-            bold: true,
-          }),
-          new TextRun({
-            text: "\tGithub is the best",
+            text: "Лист согласования",
             bold: true,
           }),
         ],
@@ -76,8 +70,7 @@ module.exports = (stages) => {
       table,
     ],
   });
-
   Packer.toBuffer(doc).then((buffer) => {
-    fs.writeFileSync("files/MyDocument.docx", buffer);
+    fs.writeFileSync(path, buffer);
   });
 }

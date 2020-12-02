@@ -35,7 +35,6 @@ router.post("/", auth, async (req, res) => {
       req.body.step
     ].participant.findIndex((el) => el.email === req.body.email);
     //внос голоса на этап
-    console.log('name', req.body.name);
     stages[req.body.step].participant[indexParticipant] = {
       name: req.body.name,
       surname: req.body.surname,
@@ -73,16 +72,13 @@ router.post("/", auth, async (req, res) => {
       }
     }
     if (!stages[req.body.step + 1]) {
-      console.log('end');
-      console.log('stages', stages);
-      generatingList(stages);
-      stages.forEach((el) => {
-        console.log('participant', el.participant);
-      })
+      const pathToSheet = `files/${Math.floor(Date.now() / 1000)}_agreementSheet.docx`;
+      generatingList(stages, pathToSheet );
+      await Process.findByIdAndUpdate(req.body.processId, { pathToSheet });
     }
     //сохранение изменений
     await Solution.findByIdAndUpdate(req.body.id, { vote: req.body.vote, dateVote: req.body.dateVote });
-    await Process.findByIdAndUpdate(req.body.processId, { stages: stages });
+    await Process.findByIdAndUpdate(req.body.processId, { stages });
     const solution = await Solution.findById(req.body.id);
     res.status(200);
     res.send(solution);
