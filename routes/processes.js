@@ -22,7 +22,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 router.get("/download", auth, async (req, res) => {
-  console.log('test');
   const file = appDir + req.query.path;
   res.download(file);
 });

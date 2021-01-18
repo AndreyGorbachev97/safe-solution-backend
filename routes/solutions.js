@@ -73,7 +73,7 @@ router.post("/", auth, async (req, res) => {
     }
     if (!stages[req.body.step + 1]) {
       const pathToSheet = `files/${Math.floor(Date.now() / 1000)}_agreementSheet.docx`;
-      generatingList(stages, pathToSheet );
+      generatingList(stages, pathToSheet);
       await Process.findByIdAndUpdate(req.body.processId, { pathToSheet });
     }
     //сохранение изменений

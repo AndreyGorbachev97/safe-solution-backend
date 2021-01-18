@@ -23,7 +23,7 @@ module.exports = (stages, path) => {
           children: [new Paragraph(part.stage)],
         }),
         new TableCell({
-          children: [new Paragraph('20-11-2020')],
+          children: [new Paragraph(part.dateVote)],
         }),
       ],
     })
